@@ -139,14 +139,18 @@ module "eks_blueprints_kubernetes_addons" {
   eks_cluster_version  = module.eks_blueprints.eks_cluster_version
   
   enable_ipv6 = true  # Enable Ipv6 network. Attaches new VPC CNI policy to the IRSA role
-
+  
+  # EKS Managed Add-ons
+  enable_amazon_eks_coredns    = true
+  enable_amazon_eks_kube_proxy = true
+  enable_amazon_eks_vpc_cni    = true
   enable_amazon_eks_aws_ebs_csi_driver = true
 
+  # Add-ons
+  enable_aws_load_balancer_controller = true
   enable_karpenter                    = true
   enable_aws_node_termination_handler = true
   enable_kubecost                     = true
-
-  enable_datadog_operator = true
 
   tags = local.tags
 }
@@ -210,43 +214,6 @@ resource "kubectl_manifest" "karpenter_provisioner" {
   depends_on = [module.eks_blueprints_kubernetes_addons]
 }
 
-#---------------------------------------------------------------
-# Datadog Operator
-#---------------------------------------------------------------
-
-resource "kubernetes_secret_v1" "datadog_api_key" {
-  metadata {
-    name      = "datadog-secret"
-    namespace = "datadog-operator"
-  }
-
-  data = {
-    # This will reveal a secret in the Terraform state
-    api-key = var.datadog_api_key
-  }
-
-  # Ensure the operator is deployed first
-  depends_on = [module.eks_blueprints_kubernetes_addons]
-}
-
-resource "kubectl_manifest" "datadog_agent" {
-  yaml_body = <<-YAML
-    apiVersion: datadoghq.com/v1alpha1
-    kind: DatadogAgent
-    metadata:
-      name: datadog
-      namespace: datadog-operator
-    spec:
-      clusterName: ${module.eks_blueprints.eks_cluster_id}
-      credentials:
-        apiSecret:
-          secretName: ${kubernetes_secret_v1.datadog_api_key.metadata[0].name}
-          keyName: api-key
-      features:
-        kubeStateMetricsCore:
-          enabled: true
-  YAML
-}
 
 #---------------------------------------------------------------
 # Supporting Resources
