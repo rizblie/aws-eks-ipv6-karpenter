@@ -13,7 +13,7 @@ The following resources will be deployed by this blueprint:
 - A default Karpenter Provisioner (with dedicated node labels and taint)
 - A default-lt Karpenter Provisioner using Launch Template (with dedicated node labels and taint)
 
-**Note:** The example Karpenterneter provisioners use on-demand capacity. These can be changed to spot, but you must first make sure that the service-linked role for Spot has been created in your account as described [here](https://karpenter.sh/v0.21.1/getting-started/getting-started-with-eksctl/#create-the-ec2-spot-service-linked-role).
+**Note:** The example Karpenter provisioners use on-demand capacity. These can be changed to spot, but you must first make sure that the service-linked role for Spot has been created in your account as described [here](https://karpenter.sh/v0.21.1/getting-started/getting-started-with-eksctl/#create-the-ec2-spot-service-linked-role).
 
 # How to Deploy
 
@@ -38,7 +38,7 @@ git clone https://github.com/rizblie/aws-eks-ipv6-karpenter.git
 to initialize a working directory with configuration files
 
 ```bash
-cd aws-eks-ipv6-karpenter.git
+cd aws-eks-ipv6-karpenter
 terraform init
 ```
 
